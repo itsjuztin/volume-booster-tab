@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volume Booster</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-title">Volume Booster & EQ</span>
+        <span class="tab-target" id="currentTabLabel">Loading tab...</span>
+      </div>
+      <button class="reset-btn-top" id="resetTabBtn" title="Reset volume to 100%">
+        Reset
+      </button>
+    </header>
+
+    <!-- Main Volume Section -->
+    <div class="control-box">
+      <div class="volume-readout-row">
+        <span class="label">Volume</span>
+        <div class="volume-val"><span id="volumeValue">100</span>%</div>
+      </div>
+
+      <div class="slider-wrapper">
+        <input 
+          type="range" 
+          id="volumeSlider" 
+          min="0" 
+          max="1000" 
+          step="1" 
+          value="100" 
+          class="native-slider"
+        >
+      </div>
+
+      <div class="slider-ticks">
+        <span class="marker" data-val="0">0%</span>
+        <span class="marker active-marker" data-val="100">100%</span>
+        <span class="marker" data-val="500">500%</span>
+        <span class="marker" data-val="1000">1000%</span>
+      </div>
+
+      <!-- Preset Pills -->
+      <div class="preset-row">
+        <button class="preset-pill active" data-volume="100">100%</button>
+        <button class="preset-pill" data-volume="200">200%</button>
+        <button class="preset-pill" data-volume="500">500%</button>
+        <button class="preset-pill" data-volume="1000">1000%</button>
+      </div>
+    </div>
+
+    <!-- Equalizer Section -->
+    <div class="control-box">
+      <div class="accordion-header" id="eqToggle">
+        <span class="label">Equalizer</span>
+        <span class="eq-status" id="eqBadge">Flat</span>
+      </div>
+
+      <div class="eq-content" id="eqContent">
+        <div class="preset-row">
+          <button class="preset-pill active" data-preset="flat">Flat</button>
+          <button class="preset-pill" data-preset="vocal">Vocal</button>
+          <button class="preset-pill" data-preset="bass">Bass</button>
+          <button class="preset-pill" data-preset="night">Night</button>
+        </div>
+
+        <div class="eq-sliders">
+          <div class="eq-group">
+            <div class="eq-text-row">
+              <span>Bass (100 Hz)</span>
+              <span id="bassVal">0 dB</span>
+            </div>
+            <input type="range" id="bassSlider" min="-12" max="12" step="1" value="0" class="native-slider small">
+          </div>
+
+          <div class="eq-group">
+            <div class="eq-text-row">
+              <span>Mids / Vocals (1.5 kHz)</span>
+              <span id="midVal">0 dB</span>
+            </div>
+            <input type="range" id="midSlider" min="-12" max="12" step="1" value="0" class="native-slider small">
+          </div>
+
+          <div class="eq-group">
+            <div class="eq-text-row">
+              <span>Treble (8 kHz)</span>
+              <span id="trebleVal">0 dB</span>
+            </div>
+            <input type="range" id="trebleSlider" min="-12" max="12" step="1" value="0" class="native-slider small">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Playing Audio -->
+    <div class="control-box audio-tabs-box">
+      <div class="label">Tabs with audio</div>
+      <div class="audible-tabs-list" id="audibleTabsList">
+        <div class="empty-state">No other audio tabs</div>
+      </div>
+    </div>
+
+    <!-- Footer Feedback Link -->
+    <footer class="app-footer-row">
+      <a href="https://github.com/itsjuztin/volume-booster-tab/issues" target="_blank" class="footer-link">Report an issue / feedback</a>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
