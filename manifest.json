@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Volume Booster & Equalizer for Tabs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Per-tab volume booster up to 1000% with soft limiter, 3-band equalizer, and zero ads.",
   "permissions": [
     "tabCapture",
