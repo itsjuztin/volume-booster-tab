@@ -16,6 +16,45 @@ let currentTabId = null;
 let currentVolume = 100;
 let currentEq = { bass: 0, mid: 0, treble: 0 };
 
+/**
+ * Maps slider position (0..1000) to human-perceptual volume (0..1000%).
+ * 0..333 -> 0..100% (fine control, 1% steps)
+ * 333..667 -> 100..500% (boost control, 5% steps)
+ * 667..1000 -> 500..1000% (high boost, 10% steps)
+ */
+function sliderToVolume(pos) {
+  if (pos <= 0) return 0;
+  if (pos >= 1000) return 1000;
+  if (pos <= 333) {
+    return Math.round((pos / 333.0) * 100);
+  } else if (pos <= 667) {
+    const frac = (pos - 333) / 334.0;
+    const val = 100 + frac * 400;
+    return Math.round(val / 5.0) * 5;
+  } else {
+    const frac = (pos - 667) / 333.0;
+    const val = 500 + frac * 500;
+    return Math.round(val / 10.0) * 10;
+  }
+}
+
+/**
+ * Maps volume (0..1000%) to slider position (0..1000).
+ */
+function volumeToSlider(vol) {
+  if (vol <= 0) return 0;
+  if (vol >= 1000) return 1000;
+  if (vol <= 100) {
+    return Math.round((vol / 100.0) * 333);
+  } else if (vol <= 500) {
+    const frac = (vol - 100.0) / 400.0;
+    return Math.round(333 + frac * 334);
+  } else {
+    const frac = (vol - 500.0) / 500.0;
+    return Math.round(667 + frac * 333);
+  }
+}
+
 function getDomElements() {
   return {
     tabLabel: document.getElementById('currentTabLabel'),
@@ -41,7 +80,7 @@ function getDomElements() {
 function updateVolumeUi(volume, elements) {
   currentVolume = volume;
   elements.volumeValue.textContent = volume;
-  elements.volumeSlider.value = volume;
+  elements.volumeSlider.value = volumeToSlider(volume);
 
   elements.presetButtons.forEach(btn => {
     const btnVol = parseInt(btn.dataset.volume, 10);
@@ -122,8 +161,21 @@ function renderAudibleTabs(tabs, container) {
 function bindEventListeners(elements) {
   // Volume Slider input
   elements.volumeSlider.addEventListener('input', (e) => {
-    const vol = parseInt(e.target.value, 10);
-    updateVolumeUi(vol, elements);
+    const pos = parseInt(e.target.value, 10);
+    const vol = sliderToVolume(pos);
+    currentVolume = vol;
+    elements.volumeValue.textContent = vol;
+
+    elements.presetButtons.forEach(btn => {
+      const btnVol = parseInt(btn.dataset.volume, 10);
+      btn.classList.toggle('active', btnVol === vol);
+    });
+
+    elements.markers.forEach(marker => {
+      const markerVal = parseInt(marker.dataset.val, 10);
+      marker.classList.toggle('active-marker', markerVal === vol);
+    });
+
     sendWorkerMessage('SET_VOLUME', { volume: vol, ...currentEq });
   });
 
