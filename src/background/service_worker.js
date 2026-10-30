@@ -80,11 +80,13 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   sendToAudioEngine({ action: 'STOP_CAPTURE', tabId }).catch(() => {});
 });
 
-// Reset tab audio to clean 100% state when navigating or refreshing
-chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (changeInfo.status === 'loading') {
-    updateTabBadge(tabId, 100);
-    sendToAudioEngine({ action: 'STOP_CAPTURE', tabId }).catch(() => {});
+// Re-assert badge text across in-tab page navigations
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
+  if (changeInfo.status === 'complete') {
+    const session = await sendToAudioEngine({ action: 'GET_SESSION', tabId });
+    if (session && session.active && session.volume) {
+      updateTabBadge(tabId, session.volume);
+    }
   }
 });
 
@@ -164,6 +166,12 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       updateTabBadge(tabId, 100);
       sendResponse({ success: true });
     })();
+    return true;
+  }
+
+  if (action === 'STREAM_ENDED') {
+    updateTabBadge(tabId, 100);
+    sendResponse({ success: true });
     return true;
   }
 

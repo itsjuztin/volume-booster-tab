@@ -24,7 +24,7 @@ Most tab volume boosters on the Chrome Web Store suffer from the same issues:
 - **Up to 1000% Volume Boost:** Smooth, fine-grained slider control with quick presets (100%, 200%, 500%, 1000%).
 - **Anti-Clipping Soft Limiter:** Integrated `DynamicsCompressorNode` acts as a brickwall limiter, keeping audio loud and punchy without cracking your speakers.
 - **3-Band Equalizer:** Dedicated Bass (100 Hz), Mid/Vocal (1.5 kHz), and Treble (8 kHz) adjustments with one-click presets (*Flat*, *Vocal*, *Bass*, *Night*).
-- **Tab Isolation:** Volume changes strictly apply to the active session and cleanly default to 100% on page refresh.
+- **Tab Isolation & Persistence:** Volume changes remain active across page navigations within the tab until the tab is closed or reset.
 - **Tab Switcher:** Quickly view and switch to any background tab currently outputting sound.
 - **Native Chromium Design:** Clean, distraction-free Material Dark interface designed to match your browser.
 

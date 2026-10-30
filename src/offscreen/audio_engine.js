@@ -69,7 +69,21 @@ async function startTabAudioCapture({ tabId, streamId, volume = DEFAULT_VOLUME, 
   // Discard video tracks immediately to eliminate unnecessary overhead
   rawStream.getVideoTracks().forEach(track => track.stop());
 
-  const audioStream = new MediaStream(rawStream.getAudioTracks());
+  const audioTracks = rawStream.getAudioTracks();
+  const audioStream = new MediaStream(audioTracks);
+
+  // Monitor track termination (e.g. if navigation hits an unsupported page)
+  audioTracks.forEach(track => {
+    track.onended = () => {
+      stopTabAudioCapture(tabId);
+      chrome.runtime.sendMessage({
+        target: 'service_worker',
+        action: 'STREAM_ENDED',
+        tabId
+      }).catch(() => {});
+    };
+  });
+
   const audioContext = new AudioContext({ latencyHint: 'interactive' });
   const sourceNode = audioContext.createMediaStreamSource(audioStream);
 
@@ -147,7 +161,10 @@ function stopTabAudioCapture(tabId) {
     return { success: true };
   }
 
-  session.stream.getTracks().forEach(track => track.stop());
+  session.stream.getTracks().forEach(track => {
+    track.onended = null;
+    track.stop();
+  });
   session.audioContext.close().catch(() => {});
   audioSessions.delete(tabId);
   return { success: true };
